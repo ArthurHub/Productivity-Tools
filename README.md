@@ -9,7 +9,11 @@ naturally I thought there should be an easy way to transform OneNote HTML output
 ## Example
 
 Taking this simple OneNote page:
-!(OneNote page)[https://raw.githubusercontent.com/ArthurHub/OnenoteMarkdownConverter/master/img1.png]
+
+![OneNote page](https://raw.githubusercontent.com/ArthurHub/OnenoteMarkdownConverter/master/img1.png)
 
 and copying it to the converter:
-!(Converter)[https://raw.githubusercontent.com/ArthurHub/OnenoteMarkdownConverter/master/img2.png]
+* On the left is the HTML as copied from OneNote
+* On the right is the converted markdown
+
+![Converter](https://raw.githubusercontent.com/ArthurHub/OnenoteMarkdownConverter/master/img2.png)
