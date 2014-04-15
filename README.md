@@ -1,4 +1,4 @@
-OnenoteMarkdownConverter
+OneNote to Markdown Converter
 ========================
 
 Tool for converting page create in Microsoft OneNote to Markdown format.
