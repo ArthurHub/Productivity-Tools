@@ -11,13 +11,8 @@
 // "The Art of War"
 
 using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Text.RegularExpressions;
 using System.Windows.Forms;
-using HtmlAgilityPack;
 using OnenoteMarkdownConverter.Properties;
-using HtmlDocument = HtmlAgilityPack.HtmlDocument;
 
 namespace OnenoteMarkdownConverter
 {
@@ -29,12 +24,15 @@ namespace OnenoteMarkdownConverter
         {
             InitializeComponent();
 
-            Icon = Resources._1393887946_20362;
+            Icon = Resources.icon;
 
             _timer = new Timer();
             _timer.Interval = 500;
             _timer.Tick += OnTimerTick;
         }
+
+
+        #region Private methods
 
         private void OnConvertButton_Click(object sender, EventArgs e)
         {
@@ -42,14 +40,14 @@ namespace OnenoteMarkdownConverter
             _htmlTextBox.Text = String.Empty;
             _htmlTextBox.SetHtmlTextFromClipboard();
             RunConvert();
-            if (!string.IsNullOrWhiteSpace(_markdownTextBox.Text))
+            if( !string.IsNullOrWhiteSpace(_markdownTextBox.Text) )
                 Clipboard.SetText(_markdownTextBox.Text);
             _timer.Stop();
         }
 
         private void OnCopyButton_Click(object sender, EventArgs e)
         {
-            if (!string.IsNullOrWhiteSpace(_markdownTextBox.Text)) 
+            if( !string.IsNullOrWhiteSpace(_markdownTextBox.Text) )
                 Clipboard.SetText(_markdownTextBox.Text);
         }
 
@@ -74,11 +72,13 @@ namespace OnenoteMarkdownConverter
 
         private void OnTextBox_KeyPress(object sender, KeyPressEventArgs e)
         {
-            if (e.KeyChar == '\x1')
+            if( e.KeyChar == '\x1' )
             {
-                ((TextBox)sender).SelectAll();
+                ( (TextBox)sender ).SelectAll();
                 e.Handled = true;
             }
         }
+
+        #endregion
     }
 }

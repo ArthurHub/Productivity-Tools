@@ -32,7 +32,7 @@
             this._markdownTextBox = new System.Windows.Forms.TextBox();
             this._copyButton = new System.Windows.Forms.Button();
             this._convertButton = new System.Windows.Forms.Button();
-            this._htmlTextBox = new OnenoteMarkdownConverter.HtmlTextboxcs();
+            this._htmlTextBox = new OnenoteMarkdownConverter.HtmlTextBox();
             ((System.ComponentModel.ISupportInitialize)(this._splitContainer)).BeginInit();
             this._splitContainer.Panel1.SuspendLayout();
             this._splitContainer.Panel2.SuspendLayout();
@@ -129,7 +129,7 @@
 
         private System.Windows.Forms.SplitContainer _splitContainer;
         private System.Windows.Forms.TextBox _markdownTextBox;
-        private HtmlTextboxcs _htmlTextBox;
+        private HtmlTextBox _htmlTextBox;
         private System.Windows.Forms.Button _copyButton;
         private System.Windows.Forms.Button _convertButton;
     }

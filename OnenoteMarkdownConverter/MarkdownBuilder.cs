@@ -10,6 +10,8 @@ namespace OnenoteMarkdownConverter
     /// </summary>
     internal sealed class MarkdownBuilder
     {
+        #region Fields and Consts
+
         /// <summary>
         /// The inner string builder used to create the markdown text
         /// </summary>
@@ -19,6 +21,9 @@ namespace OnenoteMarkdownConverter
         /// Used to 
         /// </summary>
         private readonly List<Tuple<int, string, string>> _references = new List<Tuple<int, string, string>>();
+
+        #endregion
+
 
         /// <summary>
         /// Is the conversion is currently on table
@@ -70,8 +75,6 @@ namespace OnenoteMarkdownConverter
             _builder.Append("&nbsp;").AppendLine();
             return this;
         }
-
-        
 
         public int AddReference(string value, string title)
         {

@@ -34,7 +34,8 @@ namespace OnenoteMarkdownConverter
 
         private static Assembly CurrentDomainOnAssemblyResolve(object sender, ResolveEventArgs args)
         {
-            return args.Name.Contains("HtmlAgilityPack") ? Assembly.Load(Resources.HtmlAgilityPack) : null;
+            //return args.Name.Contains("HtmlAgilityPack") ? Assembly.Load(Resources.HtmlAgilityPack) : null;
+            return null;
         }
     }
 }
