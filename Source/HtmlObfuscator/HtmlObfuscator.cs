@@ -12,6 +12,7 @@
 
 using System;
 using System.Windows.Forms;
+using HtmlObfuscator.Properties;
 
 namespace HtmlObfuscator
 {
@@ -20,6 +21,8 @@ namespace HtmlObfuscator
         public HtmlObfuscator()
         {
             InitializeComponent();
+
+            Icon = Resources.icon;
         }
 
         private void OnPasteHtmlButton_Click(object sender, EventArgs e)

@@ -41,7 +41,9 @@
             // 
             // _splitContainer
             // 
-            this._splitContainer.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this._splitContainer.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this._splitContainer.Location = new System.Drawing.Point(0, 41);
             this._splitContainer.Name = "_splitContainer";
             // 
@@ -79,6 +81,7 @@
             // 
             // _pasteHtmlButton
             // 
+            this._pasteHtmlButton.Anchor = System.Windows.Forms.AnchorStyles.Top;
             this._pasteHtmlButton.Location = new System.Drawing.Point(267, 12);
             this._pasteHtmlButton.Name = "_pasteHtmlButton";
             this._pasteHtmlButton.Size = new System.Drawing.Size(75, 23);
@@ -89,6 +92,7 @@
             // 
             // _copyHtmlButton
             // 
+            this._copyHtmlButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this._copyHtmlButton.Location = new System.Drawing.Point(605, 12);
             this._copyHtmlButton.Name = "_copyHtmlButton";
             this._copyHtmlButton.Size = new System.Drawing.Size(75, 23);
