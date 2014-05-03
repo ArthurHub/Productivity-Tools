@@ -90,7 +90,7 @@ namespace OnenoteMarkdownConverter
 
         public string CleanString(string str)
         {
-            if( str != null )
+            if (str != null)
             {
                 str = str.Replace("Machine generated alternative", "");
                 str = Regex.Replace(str, "&#\\d+;", "");

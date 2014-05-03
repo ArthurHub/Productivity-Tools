@@ -35,12 +35,12 @@ namespace HtmlObfuscator
         /// <returns>obfuscated html</returns>
         public static string Obfuscate(string html)
         {
-            if( !string.IsNullOrWhiteSpace(html) )
+            if (!string.IsNullOrWhiteSpace(html))
             {
                 HtmlDocument doc = new HtmlDocument();
                 doc.LoadHtml(html);
 
-                if( doc.DocumentNode != null )
+                if (doc.DocumentNode != null)
                 {
                     ObfuscateNode(doc.DocumentNode);
 
@@ -58,11 +58,11 @@ namespace HtmlObfuscator
         /// <param name="node"></param>
         private static void ObfuscateNode(HtmlNode node)
         {
-            switch( node.NodeType )
+            switch (node.NodeType)
             {
                 case HtmlNodeType.Document:
                 case HtmlNodeType.Element:
-                    foreach(var childNode in node.ChildNodes)
+                    foreach (var childNode in node.ChildNodes)
                         ObfuscateNode(childNode);
                     break;
                 case HtmlNodeType.Comment:
@@ -86,24 +86,24 @@ namespace HtmlObfuscator
             var sb = new StringBuilder(text);
 
             bool ignore = false;
-            for(int i = 0; i < text.Length; i++)
+            for (int i = 0; i < text.Length; i++)
             {
                 var c = text[i];
-                if( c == '&' )
+                if (c == '&')
                 {
                     ignore = true;
                 }
-                else if( c == ';' )
+                else if (c == ';')
                 {
                     ignore = false;
                 }
-                else if( !ignore )
+                else if (!ignore)
                 {
-                    if( Char.IsLetter(c) )
+                    if (Char.IsLetter(c))
                     {
                         sb[i] = (char)_rand.Next('a', 'z' + 1);
                     }
-                    else if( char.IsDigit(c) )
+                    else if (char.IsDigit(c))
                     {
                         sb[i] = (char)_rand.Next('0', '9' + 1);
                     }

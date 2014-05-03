@@ -10,6 +10,7 @@
 // - Sun Tsu,
 // "The Art of War"
 
+using System;
 using System.Windows.Forms;
 
 namespace OnenoteMarkdownConverter
@@ -34,7 +35,7 @@ namespace OnenoteMarkdownConverter
             {
                 var htmlStr = htmlData.ToString();
 
-                int start = htmlStr.IndexOf(StartFragment, System.StringComparison.Ordinal);
+                int start = htmlStr.IndexOf(StartFragment, StringComparison.Ordinal);
                 if (start > -1)
                 {
                     int end = htmlStr.IndexOf(EndFragment, start);
@@ -54,14 +55,12 @@ namespace OnenoteMarkdownConverter
         protected override void WndProc(ref Message m)
         {
             // Trap WM_PASTE:
-            if( m.Msg == 0x302 && Clipboard.ContainsText() )
+            if (m.Msg == 0x302 && Clipboard.ContainsText())
             {
-                if( SetHtmlTextFromClipboard() )
+                if (SetHtmlTextFromClipboard())
                     return;
             }
             base.WndProc(ref m);
         }
-
-        
     }
 }

@@ -40,14 +40,14 @@ namespace OnenoteMarkdownConverter
             _htmlTextBox.Text = String.Empty;
             _htmlTextBox.SetHtmlTextFromClipboard();
             RunConvert();
-            if( !string.IsNullOrWhiteSpace(_markdownTextBox.Text) )
+            if (!string.IsNullOrWhiteSpace(_markdownTextBox.Text))
                 Clipboard.SetText(_markdownTextBox.Text);
             _timer.Stop();
         }
 
         private void OnCopyButton_Click(object sender, EventArgs e)
         {
-            if( !string.IsNullOrWhiteSpace(_markdownTextBox.Text) )
+            if (!string.IsNullOrWhiteSpace(_markdownTextBox.Text))
                 Clipboard.SetText(_markdownTextBox.Text);
         }
 
@@ -72,9 +72,9 @@ namespace OnenoteMarkdownConverter
 
         private void OnTextBox_KeyPress(object sender, KeyPressEventArgs e)
         {
-            if( e.KeyChar == '\x1' )
+            if (e.KeyChar == '\x1')
             {
-                ( (TextBox)sender ).SelectAll();
+                ((TextBox)sender).SelectAll();
                 e.Handled = true;
             }
         }

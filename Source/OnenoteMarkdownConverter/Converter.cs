@@ -83,35 +83,35 @@ namespace OnenoteMarkdownConverter
         private void HandleElement(HtmlNode node, bool before)
         {
             HandleParagraph(node, before);
-            
+
             HandleLink(node, before);
-            
+
             HandleImage(node, before);
-            
+
             HandleSpan(node);
 
             HandleList(node, before);
-                
+
             HandleTable(node, before);
         }
 
         private void HandleParagraph(HtmlNode node, bool before)
         {
-            if( node.Name == "p" )
+            if (node.Name == "p")
             {
                 var header = GetHeader(node);
-                if( header != null )
+                if (header != null)
                 {
-                    if( before )
+                    if (before)
                     {
-                        if( !_builder.InTable )
+                        if (!_builder.InTable)
                             _builder.AppendLine();
                         _builder.Append(header).Append(" ");
                     }
                 }
                 else
                 {
-                    if( !_builder.InTable && !_builder.IsEndsNewLine() )
+                    if (!_builder.InTable && !_builder.IsEndsNewLine())
                         _builder.AppendLine();
                 }
             }
@@ -119,12 +119,12 @@ namespace OnenoteMarkdownConverter
 
         private void HandleLink(HtmlNode node, bool before)
         {
-            if( node.Name == "a" )
+            if (node.Name == "a")
             {
                 var href = node.GetAttributeValue("href", null);
-                if( href != null )
+                if (href != null)
                 {
-                    if( before )
+                    if (before)
                     {
                         _builder.Append("[");
                     }
@@ -139,12 +139,12 @@ namespace OnenoteMarkdownConverter
 
         private void HandleImage(HtmlNode node, bool before)
         {
-            if( node.Name == "img" )
+            if (node.Name == "img")
             {
                 var src = node.GetAttributeValue("src", null);
-                if( src != null )
+                if (src != null)
                 {
-                    if( before )
+                    if (before)
                     {
                         var uri = new Uri(src);
                         var name = uri.Segments[uri.Segments.Length - 1];
@@ -158,46 +158,46 @@ namespace OnenoteMarkdownConverter
 
         private void HandleSpan(HtmlNode node)
         {
-            if( node.Name == "span" )
+            if (node.Name == "span")
             {
                 bool bold = CheckStylesContains(node, "font-weigh", "bold");
                 bool italic = CheckStylesContains(node, "font-style", "italic");
-                if( italic && bold )
+                if (italic && bold)
                     _builder.Append("***");
-                else if( bold )
+                else if (bold)
                     _builder.Append("**");
-                else if( italic )
+                else if (italic)
                     _builder.Append("*");
             }
         }
 
         private void HandleList(HtmlNode node, bool before)
         {
-            if( before && ( node.Name == "ul" || node.Name == "ol" ) )
+            if (before && (node.Name == "ul" || node.Name == "ol"))
             {
                 _builder.AppendStrongLine();
             }
 
-            if( node.Name == "li" )
+            if (node.Name == "li")
             {
                 int number = 0;
-                if( node.ParentNode != null && node.ParentNode.Name == "ol" )
+                if (node.ParentNode != null && node.ParentNode.Name == "ol")
                 {
-                    foreach(var childNode in node.ParentNode.ChildNodes)
+                    foreach (var childNode in node.ParentNode.ChildNodes)
                     {
-                        if( childNode.Name == "li" )
+                        if (childNode.Name == "li")
                         {
                             number = childNode.GetAttributeValue("value", 1);
                             break;
                         }
                     }
 
-                    for(int i = 0; i < node.ParentNode.ChildNodes.Count && node.ParentNode.ChildNodes[i] != node; i++)
-                        if( node.ParentNode.ChildNodes[i].Name == "li" )
+                    for (int i = 0; i < node.ParentNode.ChildNodes.Count && node.ParentNode.ChildNodes[i] != node; i++)
+                        if (node.ParentNode.ChildNodes[i].Name == "li")
                             number++;
                 }
 
-                if( before )
+                if (before)
                 {
                     _builder.AppendLine().Append(number > 0 ? number + "." : "*").Append(" ");
                 }
@@ -206,14 +206,14 @@ namespace OnenoteMarkdownConverter
 
         private void HandleTable(HtmlNode node, bool before)
         {
-            if( node.Name == "table" )
+            if (node.Name == "table")
             {
                 _builder.InTable = before;
                 _builder.TableHeaderDone = false;
             }
-            else if( node.Name == "td" )
+            else if (node.Name == "td")
             {
-                if( before )
+                if (before)
                 {
                     _builder.Append("| ");
                 }
@@ -222,24 +222,24 @@ namespace OnenoteMarkdownConverter
                     _builder.Append(" ");
                 }
             }
-            else if( node.Name == "tr" )
+            else if (node.Name == "tr")
             {
-                if( !before )
+                if (!before)
                 {
                     _builder.Append("|").AppendLine();
-                    if( !_builder.TableHeaderDone )
+                    if (!_builder.TableHeaderDone)
                     {
                         _builder.TableHeaderDone = true;
                         _builder.Append("| ");
-                        foreach(var childNode in node.ChildNodes)
+                        foreach (var childNode in node.ChildNodes)
                         {
-                            if( childNode.Name == "td" )
+                            if (childNode.Name == "td")
                             {
                                 var align = GetAlign(childNode);
-                                if( align == 0 )
+                                if (align == 0)
                                     _builder.Append(":");
                                 _builder.Append("---");
-                                if( align >= 0 )
+                                if (align >= 0)
                                     _builder.Append(":");
                                 _builder.Append(" | ");
                             }
