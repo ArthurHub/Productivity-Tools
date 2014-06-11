@@ -1,0 +1,75 @@
+﻿<UserControl x:Class="RegExEditor.RegExControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d" 
+             d:DesignHeight="400" d:DesignWidth="600">
+
+    <UserControl.Resources>
+        <Image x:Key="refreshImg" Source="Resources/Refresh.png"/>
+        <Image x:Key="replaceImg" Source="Resources/Daytona500.png"/>
+    </UserControl.Resources>
+
+    <DockPanel>
+        <ToolBar DockPanel.Dock="Top" Height="46">
+            <Button x:Name="_refreshButton" Content="{StaticResource refreshImg}" Click="OnRefreshButton_Click" IsTabStop="False" />
+            <Button x:Name="_replaceButton" Content="{StaticResource replaceImg}" Click="OnReplaceButton_Click" IsTabStop="False" />
+        </ToolBar>
+
+        <GroupBox DockPanel.Dock="Top" Padding="5">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Text="Regex: " DockPanel.Dock="Left" Margin="0,0,15,0" VerticalAlignment="Center"/>
+                <TextBlock Text="Replace: " DockPanel.Dock="Left" Margin="0,0,5,0" Grid.Row="1" VerticalAlignment="Center"/>
+
+                <TextBox x:Name="_regexTB" TextChanged="OnRegexTB_TextChanged" Grid.Column="1" Margin="5" TabIndex="1"/>
+                <TextBox x:Name="_replaceRegexTB" Grid.Row="1" Grid.Column="1" Margin="5" TabIndex="2"/>
+            </Grid>
+        </GroupBox>
+
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition Width="220"/>
+            </Grid.ColumnDefinitions>
+
+            <TextBox x:Name="_textTB" AcceptsReturn="True" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Visible" Margin="0,0,3,0" TabIndex="3" />
+
+            <GridSplitter Width="3" Background="LightGray" Padding="50" IsTabStop="False" />
+
+            <ListView x:Name="_matchesLV" Grid.Column="1" HorizontalContentAlignment="Stretch" IsTabStop="False">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <Border BorderBrush="LightSteelBlue" Background="Cornsilk" BorderThickness="1" Margin="1" Padding="1.5">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition/>
+                                    <RowDefinition/>
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition/>
+                                </Grid.ColumnDefinitions>
+
+                                <TextBlock Text="Value: " />
+                                <TextBlock Text="Index: " Grid.Row="1"/>
+
+                                <TextBlock Text="{Binding Path=Value}" Grid.Column="1" />
+                                <TextBlock Text="{Binding Path=Index}" Grid.Row="1" Grid.Column="1" />
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </Grid>
+    </DockPanel>
+</UserControl>

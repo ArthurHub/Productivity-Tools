@@ -14,6 +14,7 @@ using System.Windows;
 using System.Windows.Controls;
 using HtmlObfuscator;
 using OnenoteMarkdownConverter;
+using RegExEditor;
 
 namespace ProductivityTools
 {
@@ -29,25 +30,26 @@ namespace ProductivityTools
 
         private void OnOneNoteButton_Click(object sender, RoutedEventArgs e)
         {
-            OpenToolWindow(new ConverterControl());
+            OpenToolWindow("OneNote to Makdown converter",new ConverterControl());
         }
 
         private void OnHtmlObfuscatorButton_Click(object sender, RoutedEventArgs e)
         {
-            OpenToolWindow(new HtmlObfuscatorControl());
+            OpenToolWindow("HTML obfuscator", new HtmlObfuscatorControl());
         }
 
         private void OnRegExEditorButton_Click(object sender, RoutedEventArgs e)
         {
+            OpenToolWindow("RegEx editor",new RegExControl());
         }
 
         /// <summary>
         /// Open tool window with the given tool control.
         /// </summary>
-        private void OpenToolWindow(UserControl control)
+        private void OpenToolWindow(string name, UserControl control)
         {
             var toolWindow = new ToolWindow();
-            toolWindow.SetControl(control);
+            toolWindow.SetControl(name, control);
             toolWindow.Show();
             Close();
         }

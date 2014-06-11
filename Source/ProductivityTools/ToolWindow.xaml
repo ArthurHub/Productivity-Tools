@@ -1,7 +1,7 @@
 ﻿<Window x:Class="ProductivityTools.ToolWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="ToolWindow" Height="600" Width="1000" Background="AliceBlue" >
+        Title="Tool: " Height="600" Width="1000" Background="AliceBlue" >
     <Grid x:Name="_grid">
         <Grid.RowDefinitions>
             <RowDefinition Height="25"/>

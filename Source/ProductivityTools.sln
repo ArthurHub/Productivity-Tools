@@ -16,6 +16,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HtmlObfuscator", "HtmlObfus
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OnenoteMarkdownConverter", "OnenoteMarkdownConverter\OnenoteMarkdownConverter.csproj", "{0DCAC257-CFC3-4AB2-A695-CF15D15C43CD}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RegExEditor", "RegExEditor\RegExEditor.csproj", "{AAD3C84F-2389-419F-9F45-D5BCADE215A8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -34,6 +36,10 @@ Global
 		{0DCAC257-CFC3-4AB2-A695-CF15D15C43CD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0DCAC257-CFC3-4AB2-A695-CF15D15C43CD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0DCAC257-CFC3-4AB2-A695-CF15D15C43CD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AAD3C84F-2389-419F-9F45-D5BCADE215A8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AAD3C84F-2389-419F-9F45-D5BCADE215A8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AAD3C84F-2389-419F-9F45-D5BCADE215A8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AAD3C84F-2389-419F-9F45-D5BCADE215A8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

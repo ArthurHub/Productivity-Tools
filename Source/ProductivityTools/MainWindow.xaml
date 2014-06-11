@@ -19,7 +19,7 @@
             <Image Source="Resources/HTML.png"/>
         </Button>
         <Button ToolTip="RegEx editor" Click="OnRegExEditorButton_Click">
-            <Image  Source="Resources/magnifier.png"/>
+            <Image  Source="Resources/regex edit.png"/>
         </Button>
     </WrapPanel>
 </Window>

@@ -28,8 +28,9 @@ namespace ProductivityTools
         /// <summary>
         /// Set the given control to be shown in the tool window.
         /// </summary>
-        public void SetControl(UserControl control)
+        public void SetControl(string name, UserControl control)
         {
+            Title += name;
             Grid.SetRow(control, 1);
             _grid.Children.Add(control);
         }
