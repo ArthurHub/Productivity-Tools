@@ -5,6 +5,8 @@ Productivity Tools
 * **OneNote to Markdown Converter**: Tool for converting page create in Microsoft OneNote to Markdown format.
 * **HTML Obfuscator**: Tool for obfuscating html without changing the html structure.
 
+![Main](https://raw.githubusercontent.com/ArthurHub/OnenoteMarkdownConverter/master/main.png)
+
 # OneNote to Markdown Converter
 Tool for converting page create in Microsoft OneNote to Markdown format.
 
