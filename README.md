@@ -1,3 +1,5 @@
+[![Build status](https://ci.appveyor.com/api/projects/status/xym9r9ljcswq8nip)](https://ci.appveyor.com/project/ArthurHub/productivity-tools)
+
 Productivity Tools
 ==================
 * **OneNote to Markdown Converter**: Tool for converting page create in Microsoft OneNote to Markdown format.
