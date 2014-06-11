@@ -52,8 +52,8 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="HtmlObfuscatorWindow.xaml.cs">
-      <DependentUpon>HtmlObfuscatorWindow.xaml</DependentUpon>
+    <Compile Include="HtmlObfuscatorControl.xaml.cs">
+      <DependentUpon>HtmlObfuscatorControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Obfuscator.cs" />
   </ItemGroup>
@@ -64,13 +64,10 @@
     <AppDesigner Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\html.ico" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Page Include="HtmlObfuscatorWindow.xaml">
+    <Page Include="HtmlObfuscatorControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
