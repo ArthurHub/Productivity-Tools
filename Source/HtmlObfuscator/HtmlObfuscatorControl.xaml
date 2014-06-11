@@ -6,7 +6,7 @@
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="500">
     <UserControl.Resources>
-        <Style TargetType="Button">
+        <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
             <Setter Property="Margin" Value="3"/>
         </Style>
     </UserControl.Resources>

@@ -3,6 +3,11 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
-         
+        <Style TargetType="Button">
+            <Setter Property="Background" Value="#F6FFF6"/>
+        </Style>
+        <Style TargetType="Window">
+            <Setter Property="Background" Value="#F8F8FF"/>
+        </Style>
     </Application.Resources>
 </Application>

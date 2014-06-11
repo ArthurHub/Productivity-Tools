@@ -2,25 +2,26 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Productivity Tools" WindowStartupLocation="CenterScreen"
-        Height="220" Width="500" MinHeight="150" MinWidth="150">
+        Height="380" Width="350" MinHeight="210" MinWidth="360">
     <Window.Resources>
-        <Style TargetType="Button">
+        <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
             <Setter Property="Width" Value="128"/>
             <Setter Property="Height" Value="128"/>
             <Setter Property="Margin" Value="16"/>
             <Setter Property="Padding" Value="16"/>
-            <Setter Property="Background" Value="WhiteSmoke"/>
         </Style>
     </Window.Resources>
-    <WrapPanel x:Name="_panel">
-        <Button ToolTip="OneNote to Markdown converter" Click="OnOneNoteButton_Click">
-            <Image  Source="Resources/OneNote.png"/>
-        </Button>
-        <Button ToolTip="HTML obfuscator" Click="OnHtmlObfuscatorButton_Click">
-            <Image Source="Resources/HTML.png"/>
-        </Button>
-        <Button ToolTip="RegEx editor" Click="OnRegExEditorButton_Click">
-            <Image  Source="Resources/regex edit.png"/>
-        </Button>
-    </WrapPanel>
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <WrapPanel x:Name="_panel" VerticalAlignment="Center" HorizontalAlignment="Center">
+            <Button ToolTip="OneNote to Markdown converter" Click="OnOneNoteButton_Click">
+                <Image  Source="Resources/OneNote.png"/>
+            </Button>
+            <Button ToolTip="HTML obfuscator" Click="OnHtmlObfuscatorButton_Click">
+                <Image Source="Resources/HTML.png"/>
+            </Button>
+            <Button ToolTip="RegEx editor" Click="OnRegExEditorButton_Click">
+                <Image  Source="Resources/regex edit.png"/>
+            </Button>
+        </WrapPanel>
+    </ScrollViewer>
 </Window>

@@ -31,7 +31,7 @@ namespace ProductivityTools
         public void SetControl(string name, UserControl control)
         {
             Title += name;
-            Grid.SetRow(control, 1);
+            Grid.SetColumn(control, 1);
             _grid.Children.Add(control);
         }
 

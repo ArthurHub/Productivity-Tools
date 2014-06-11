@@ -2,12 +2,21 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Tool: " Height="600" Width="1000" 
-        WindowStartupLocation="CenterScreen" Background="AliceBlue" >
+        WindowStartupLocation="CenterScreen" >
     <Grid x:Name="_grid">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="25"/>
-            <RowDefinition/>
-        </Grid.RowDefinitions>
-        <Button Content="Back" Margin="2" Click="OnBack_click"/>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="30"/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <Button Margin="2" Padding="1" Background="#F5F5F5" VerticalContentAlignment="Stretch" Click="OnBack_click">
+            <StackPanel Orientation="Vertical" VerticalAlignment="Top">
+                <Image Source="Resources/back_arrow.png" Margin="2 5 2 10"/>
+                <TextBlock Text="Back to main" Margin="-1 30 0 0" FontSize="15">
+                    <TextBlock.LayoutTransform>
+                        <RotateTransform Angle="-90" />
+                    </TextBlock.LayoutTransform>
+                </TextBlock>
+            </StackPanel>
+        </Button>
     </Grid>
 </Window>

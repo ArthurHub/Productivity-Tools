@@ -44,6 +44,7 @@ namespace OnenoteMarkdownConverter
         private void OnCopyMarkdown_click(object sender, RoutedEventArgs e)
         {
             SetMarkdownToClipboard();
+            _copyMarkDownButton.Content = "Copied to Clipboard!";
         }
 
         private void OnSourceHtml_TextChanged(object sender, TextChangedEventArgs e)
@@ -57,6 +58,8 @@ namespace OnenoteMarkdownConverter
         private void RunConvert()
         {
             var converter = new Converter();
+
+            _copyMarkDownButton.Content = "Copy Markdown";
             _markdownTB.Text = converter.ConvertHtmlToMarkdown(_sourceHtmlTB.Text);
         }
 

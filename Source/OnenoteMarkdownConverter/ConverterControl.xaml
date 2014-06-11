@@ -3,11 +3,10 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:onenoteMarkdownConverter="clr-namespace:OnenoteMarkdownConverter"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
     <UserControl.Resources>
-        <Style TargetType="Button">
+        <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
             <Setter Property="Margin" Value="3"/>
         </Style>
     </UserControl.Resources>
@@ -22,7 +21,7 @@
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
         <Button Grid.Row="0" Grid.Column="0" Content="Paste from Clipboard" Click="OnPasteSourceHtml_click"/>
-        <Button Grid.Row="0" Grid.Column="2" Content="Copy Markdown" Click="OnCopyMarkdown_click"/>
+        <Button x:Name="_copyMarkDownButton" Grid.Row="0" Grid.Column="2" Content="Copy Markdown" Click="OnCopyMarkdown_click"/>
         <TextBox x:Name="_sourceHtmlTB" TextWrapping="Wrap" AcceptsReturn="True" VerticalScrollBarVisibility="Auto" Grid.Row="1" Grid.Column="0" TextChanged="OnSourceHtml_TextChanged"/>
         <GridSplitter Grid.Row="1" Grid.Column="1" Width="5" Background="Transparent" ResizeBehavior="PreviousAndNext"/>
         <TextBox x:Name="_markdownTB" TextWrapping="Wrap" AcceptsReturn="True" VerticalScrollBarVisibility="Auto" Grid.Row="1" Grid.Column="2"/>
