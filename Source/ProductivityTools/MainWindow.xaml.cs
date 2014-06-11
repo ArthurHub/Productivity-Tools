@@ -11,7 +11,9 @@
 // "The Art of War"
 
 using System.Windows;
+using System.Windows.Controls;
 using HtmlObfuscator;
+using OnenoteMarkdownConverter;
 
 namespace ProductivityTools
 {
@@ -27,19 +29,27 @@ namespace ProductivityTools
 
         private void OnOneNoteButton_Click(object sender, RoutedEventArgs e)
         {
-
+            OpenToolWindow(new ConverterControl());
         }
 
         private void OnHtmlObfuscatorButton_Click(object sender, RoutedEventArgs e)
         {
-            var toolWindow = new ToolWindow();
-            toolWindow.SetControl(new HtmlObfuscatorControl());
-            toolWindow.Show();
-            Close();
+            OpenToolWindow(new HtmlObfuscatorControl());
         }
 
         private void OnRegExEditorButton_Click(object sender, RoutedEventArgs e)
         {
+        }
+
+        /// <summary>
+        /// Open tool window with the given tool control.
+        /// </summary>
+        private void OpenToolWindow(UserControl control)
+        {
+            var toolWindow = new ToolWindow();
+            toolWindow.SetControl(control);
+            toolWindow.Show();
+            Close();
         }
     }
 }
