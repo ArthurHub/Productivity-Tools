@@ -1,7 +1,7 @@
 ﻿<Window x:Class="ProductivityTools.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Productivity Tools" Height="220" Width="500">
+        Title="Productivity Tools" Height="220" Width="500" MinHeight="150" MinWidth="150">
     <Window.Resources>
         <Style TargetType="Button">
             <Setter Property="Width" Value="128"/>
