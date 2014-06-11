@@ -21,8 +21,6 @@ namespace HtmlObfuscator
         public HtmlObfuscator()
         {
             InitializeComponent();
-
-            Icon = Resources.icon;
         }
 
         private void OnPasteHtmlButton_Click(object sender, EventArgs e)

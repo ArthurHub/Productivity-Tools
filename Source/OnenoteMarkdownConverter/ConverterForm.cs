@@ -24,8 +24,6 @@ namespace OnenoteMarkdownConverter
         {
             InitializeComponent();
 
-            Icon = Resources.icon;
-
             _timer = new Timer();
             _timer.Interval = 500;
             _timer.Tick += OnTimerTick;
