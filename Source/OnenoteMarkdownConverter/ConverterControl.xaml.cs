@@ -41,6 +41,15 @@ namespace OnenoteMarkdownConverter
             SetMarkdownToClipboard();
         }
 
+        private void OnHtmlEncodeChecked(object sender, RoutedEventArgs e)
+        {
+            if (_markdownTB != null)
+            {
+                RunConvert();
+                SetMarkdownToClipboard();
+            }
+        }
+
         private void OnCopyMarkdown_click(object sender, RoutedEventArgs e)
         {
             SetMarkdownToClipboard();
@@ -60,7 +69,7 @@ namespace OnenoteMarkdownConverter
             var converter = new Converter();
 
             _copyMarkDownButton.Content = "Copy Markdown";
-            _markdownTB.Text = converter.ConvertHtmlToMarkdown(_sourceHtmlTB.Text, new MarkdownBuilder(false));
+            _markdownTB.Text = converter.ConvertHtmlToMarkdown(_sourceHtmlTB.Text, new MarkdownBuilder(_htmlEncode.IsChecked.GetValueOrDefault(false)));
         }
 
         /// <summary>
@@ -112,6 +121,5 @@ namespace OnenoteMarkdownConverter
             }
             return false;
         }
-
     }
 }
