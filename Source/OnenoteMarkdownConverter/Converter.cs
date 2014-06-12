@@ -11,6 +11,9 @@
 // "The Art of War"
 
 using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.Net;
 using System.Text.RegularExpressions;
 using HtmlAgilityPack;
 
@@ -18,40 +21,77 @@ namespace OnenoteMarkdownConverter
 {
     internal sealed class Converter
     {
-        private MarkdownBuilder _builder;
+        #region Fields/Consts
 
         /// <summary>
-        /// 
+        /// The markdown builder to use for convert
+        /// </summary>
+        private MarkdownBuilderBase _builder;
+
+        /// <summary>
+        /// Used to 
+        /// </summary>
+        private readonly List<Link> _references = new List<Link>();
+
+        /// <summary>
+        /// Is the conversion is currently on code preformatted segment.
+        /// </summary>
+        private bool _inCode;
+
+        /// <summary>
+        /// Is the conversion is currently on table
+        /// </summary>
+        private bool _inTable;
+
+        /// <summary>
+        /// Is the table header has been created from the first row of the table
+        /// </summary>
+        private bool _tableHeaderDone;
+
+        #endregion
+
+
+        /// <summary>
+        /// Convert the given HTML
         /// </summary>
         /// <param name="html">the html string to convert</param>
-        /// <returns>the markdown</returns>
-        public string ConvertHtmlToMarkdown(string html)
+        /// <param name="builder">the markdown builder to use</param>
+        /// <returns>the markdown string</returns>
+        public string ConvertHtmlToMarkdown(string html, MarkdownBuilderBase builder)
         {
-            HtmlDocument doc = new HtmlDocument();
+            _inCode = false;
+            _inTable = false;
+            _builder = builder;
+            _references.Clear();
+
+            var doc = new HtmlDocument();
             doc.LoadHtml(html);
 
             if (doc.DocumentNode != null)
             {
-                _builder = new MarkdownBuilder();
+                // traverse the HTML document
                 foreach (var childNode in doc.DocumentNode.ChildNodes)
                 {
-                    TraverseNode(childNode);
+                    if (childNode.NodeType != HtmlNodeType.Text)
+                        TraverseNode(childNode);
                 }
 
+                // append all link references to the end
                 _builder.AppendStrongLine();
-                foreach (var reference in _builder.GetAllReferences())
-                {
-                    _builder.Append("[").Append(reference.Item1.ToString()).Append("]: ").Append(reference.Item2);
-                    if (!string.IsNullOrWhiteSpace(reference.Item3))
-                        _builder.Append(" \"").Append(reference.Item3).Append("\"");
-                    _builder.AppendLine();
-                }
+                foreach (var link in _references)
+                    builder.AppendLinkReference(link);
 
+                // fix extra lines
                 var mardown = _builder.GetMarkdown();
                 mardown = Regex.Replace(mardown, "^\\s+", "", RegexOptions.Multiline);
                 mardown = Regex.Replace(mardown, "(&nbsp;\\s*&nbsp;){1,}", "&nbsp;^^^nl^^^");
                 mardown = mardown.Replace("&nbsp;", "");
                 mardown = mardown.Replace("^^^nl^^^", "&nbsp;" + Environment.NewLine);
+
+                // replace preformatted code whitespaces
+                mardown = mardown.Replace("$-$", " ");
+
+                // return
                 return mardown;
             }
             else
@@ -60,120 +100,176 @@ namespace OnenoteMarkdownConverter
             }
         }
 
+
+        #region Private methods
+
+        /// <summary>
+        /// Traverse the HTML tree recursively from the given tree node.<br/>
+        /// 1. Insert text into the markdown.<br/>
+        /// 2.1. Handle element start.<br/>
+        /// 2.1. Handle element child elements recursively.<br/>
+        /// 2.1. Handle element end.<br/>
+        /// </summary>
         private void TraverseNode(HtmlNode node)
         {
             switch (node.NodeType)
             {
+                case HtmlNodeType.Text:
+                    HandleText(node);
+                    break;
                 case HtmlNodeType.Element:
                     HandleElement(node, true);
+
                     foreach (var childNode in node.ChildNodes)
-                    {
                         TraverseNode(childNode);
-                    }
+
                     HandleElement(node, false);
-                    break;
-                case HtmlNodeType.Text:
-                    var text = node.InnerText.Replace("\r", " ").Replace("\n", " ");
-                    text = Regex.Replace(text, "\\s{2,}", " ");
-                    _builder.Append(text);
                     break;
             }
         }
 
-        private void HandleElement(HtmlNode node, bool before)
+        /// <summary>
+        /// Handle text node by adding it to markdown builder.<br/>
+        /// Check if we have start\end of preformatted code segment.
+        /// </summary>
+        private void HandleText(HtmlNode node)
         {
-            HandleParagraph(node, before);
+            var text = node.InnerText;
+            text = text.Replace("\r", " ").Replace("\n", " ");
 
-            HandleLink(node, before);
+            text = _inCode
+                ? text.Replace(char.ConvertFromUtf32(160), "$-$")
+                : Regex.Replace(text, "\\s{2,}", " ");
 
-            HandleImage(node, before);
+            if (!_builder.HtmlEncode)
+                text = WebUtility.HtmlDecode(text);
 
-            HandleSpan(node);
+            _builder.Append(text);
 
-            HandleList(node, before);
-
-            HandleTable(node, before);
+            // identifies start and end of code segment
+            if (text.StartsWith("```"))
+            {
+                _inCode = !_inCode;
+            }
         }
 
-        private void HandleParagraph(HtmlNode node, bool before)
+        /// <summary>
+        /// Handle special formatting for element
+        /// </summary>
+        /// <param name="node">the element node</param>
+        /// <param name="isOpen">true - element opening, false - element closing</param>
+        private void HandleElement(HtmlNode node, bool isOpen)
+        {
+            HandleParagraph(node, isOpen);
+
+            HandleLink(node, isOpen);
+
+            HandleImage(node, isOpen);
+
+            HandleSpan(node, isOpen);
+
+            HandleList(node, isOpen);
+
+            HandleTable(node, isOpen);
+        }
+
+        private void HandleParagraph(HtmlNode node, bool isOpen)
         {
             if (node.Name == "p")
             {
                 var header = GetHeader(node);
                 if (header != null)
                 {
-                    if (before)
+                    if (isOpen)
                     {
-                        if (!_builder.InTable)
+                        if (!_inTable)
                             _builder.AppendLine();
                         _builder.Append(header).Append(" ");
                     }
                 }
                 else
                 {
-                    if (!_builder.InTable && !_builder.IsEndsNewLine())
+                    if (!_inTable && !_builder.IsEndsNewLine())
+                    {
                         _builder.AppendLine();
+                    }
+
+                    if (isOpen && _inCode)
+                    {
+                        var styleValue = GetStyleValue(node, "margin-left");
+                        if (styleValue != null)
+                        {
+                            double width;
+                            if (double.TryParse(styleValue.Substring(0, styleValue.Length - 3), out width))
+                            {
+                                for (int i = 0; i < width * 1000 / 375; i++)
+                                    _builder.Append("$-$$-$$-$$-$");
+                            }
+                        }
+                    }
                 }
             }
         }
 
-        private void HandleLink(HtmlNode node, bool before)
+        private void HandleSpan(HtmlNode node, bool isOpen)
+        {
+            if (node.Name == "span")
+            {
+                if (!isOpen)
+                    _builder.TrimEndWhitespaces();
+
+                bool bold = CheckStylesContains(node, "font-weigh", "bold");
+                bool italic = CheckStylesContains(node, "font-style", "italic");
+                bool underline = CheckStylesContains(node, "text-decoration", "underline");
+                _builder.AppendDecoration(bold, italic, underline);
+
+                if (!isOpen)
+                    _builder.Append(" ");
+            }
+        }
+
+        private void HandleLink(HtmlNode node, bool isOpen)
         {
             if (node.Name == "a")
             {
                 var href = node.GetAttributeValue("href", null);
                 if (href != null)
                 {
-                    if (before)
+                    if (isOpen)
                     {
                         _builder.Append("[");
                     }
                     else
                     {
-                        int reference = _builder.AddReference(href, null);
-                        _builder.Append("][").Append(reference.ToString()).Append("]");
+                        int reference = AddReference(href, null);
+                        _builder.Append("][").Append(reference.ToString(CultureInfo.CurrentCulture)).Append("]");
                     }
                 }
             }
         }
 
-        private void HandleImage(HtmlNode node, bool before)
+        private void HandleImage(HtmlNode node, bool isOpen)
         {
             if (node.Name == "img")
             {
                 var src = node.GetAttributeValue("src", null);
                 if (src != null)
                 {
-                    if (before)
+                    if (isOpen)
                     {
                         var uri = new Uri(src);
                         var name = uri.Segments[uri.Segments.Length - 1];
-                        var alt = _builder.CleanString(node.GetAttributeValue("alt", name)) ?? "image";
-                        int reference = _builder.AddReference(src, alt);
-                        _builder.Append("![").Append(alt).Append("][").Append(reference.ToString()).Append("]");
+                        var alt = CleanString(node.GetAttributeValue("alt", name)) ?? "image";
+                        int reference = AddReference(src, alt);
+                        _builder.AppendImage(reference, alt);
                     }
                 }
             }
         }
 
-        private void HandleSpan(HtmlNode node)
+        private void HandleList(HtmlNode node, bool isOpen)
         {
-            if (node.Name == "span")
-            {
-                bool bold = CheckStylesContains(node, "font-weigh", "bold");
-                bool italic = CheckStylesContains(node, "font-style", "italic");
-                if (italic && bold)
-                    _builder.Append("***");
-                else if (bold)
-                    _builder.Append("**");
-                else if (italic)
-                    _builder.Append("*");
-            }
-        }
-
-        private void HandleList(HtmlNode node, bool before)
-        {
-            if (before && (node.Name == "ul" || node.Name == "ol"))
+            if (isOpen && (node.Name == "ul" || node.Name == "ol"))
             {
                 _builder.AppendStrongLine();
             }
@@ -197,23 +293,23 @@ namespace OnenoteMarkdownConverter
                             number++;
                 }
 
-                if (before)
+                if (isOpen)
                 {
                     _builder.AppendLine().Append(number > 0 ? number + "." : "*").Append(" ");
                 }
             }
         }
 
-        private void HandleTable(HtmlNode node, bool before)
+        private void HandleTable(HtmlNode node, bool isOpen)
         {
             if (node.Name == "table")
             {
-                _builder.InTable = before;
-                _builder.TableHeaderDone = false;
+                _inTable = isOpen;
+                _tableHeaderDone = false;
             }
             else if (node.Name == "td")
             {
-                if (before)
+                if (isOpen)
                 {
                     _builder.Append("| ");
                 }
@@ -224,12 +320,12 @@ namespace OnenoteMarkdownConverter
             }
             else if (node.Name == "tr")
             {
-                if (!before)
+                if (!isOpen)
                 {
                     _builder.Append("|").AppendLine();
-                    if (!_builder.TableHeaderDone)
+                    if (!_tableHeaderDone)
                     {
-                        _builder.TableHeaderDone = true;
+                        _tableHeaderDone = true;
                         _builder.Append("| ");
                         foreach (var childNode in node.ChildNodes)
                         {
@@ -248,6 +344,30 @@ namespace OnenoteMarkdownConverter
                     }
                 }
             }
+        }
+
+        /// <summary>
+        /// Add a link reference to the references for the markdown to be generated at the end of the doc.
+        /// </summary>
+        /// <returns>the index of the reference</returns>
+        private int AddReference(string value, string title)
+        {
+            var link = new Link(_references.Count + 1, value, CleanString(title));
+            _references.Add(link);
+            return link.Index;
+        }
+
+        /// <summary>
+        /// Clean string from OneNote added garbage.
+        /// </summary>
+        private static string CleanString(string str)
+        {
+            if (str != null)
+            {
+                str = str.Replace("Machine generated alternative", "");
+                str = Regex.Replace(str, "&#\\d+;", "");
+            }
+            return str;
         }
 
         private static int GetAlign(HtmlNode node)
@@ -309,6 +429,12 @@ namespace OnenoteMarkdownConverter
             return style != null ? style.Split(';') : new string[0];
         }
 
+        private static bool CheckStylesContains(HtmlNode node, string style, string data)
+        {
+            var styleValue = GetStyle(node, style);
+            return styleValue != null && styleValue.Contains(data);
+        }
+
         private static string GetStyle(HtmlNode node, string style)
         {
             foreach (var styleValue in GetStyles(node))
@@ -319,10 +445,20 @@ namespace OnenoteMarkdownConverter
             return null;
         }
 
-        private static bool CheckStylesContains(HtmlNode node, string style, string data)
+        private static string GetStyleValue(HtmlNode node, string style)
         {
-            var styleValue = GetStyle(node, style);
-            return styleValue != null && styleValue.Contains(data);
+            foreach (var styleValue in GetStyles(node))
+            {
+                if (styleValue.Contains(style))
+                {
+                    int idx = styleValue.IndexOf(':');
+                    if (idx > -1 && idx < styleValue.Length - 1)
+                        return styleValue.Substring(idx + 1);
+                }
+            }
+            return null;
         }
+
+        #endregion
     }
 }

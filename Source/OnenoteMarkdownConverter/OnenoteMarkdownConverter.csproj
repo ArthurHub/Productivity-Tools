@@ -52,6 +52,7 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Link.cs" />
     <Page Include="ConverterControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -60,6 +61,7 @@
     <Compile Include="ConverterControl.xaml.cs">
       <DependentUpon>ConverterControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="WordpressMarkdownBuilder.cs" />
     <Compile Include="MarkdownBuilder.cs" />
   </ItemGroup>
   <ItemGroup>

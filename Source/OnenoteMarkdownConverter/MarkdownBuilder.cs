@@ -1,40 +1,49 @@
-﻿using System;
-using System.Collections.Generic;
+﻿// "Therefore those skilled at the unorthodox
+// are infinite as heaven and earth,
+// inexhaustible as the great rivers.
+// When they come to an end,
+// they begin again,
+// like the days and months;
+// they die and are reborn,
+// like the four seasons."
+// 
+// - Sun Tsu,
+// "The Art of War"
+
+using System;
+using System.Globalization;
 using System.Text;
-using System.Text.RegularExpressions;
 
 namespace OnenoteMarkdownConverter
 {
     /// <summary>
     /// Builder for creating markdown text.
     /// </summary>
-    internal sealed class MarkdownBuilder
+    internal abstract class MarkdownBuilderBase
     {
         #region Fields and Consts
 
         /// <summary>
         /// The inner string builder used to create the markdown text
         /// </summary>
-        private readonly StringBuilder _builder = new StringBuilder();
-
-        /// <summary>
-        /// Used to 
-        /// </summary>
-        private readonly List<Tuple<int, string, string>> _references = new List<Tuple<int, string, string>>();
+        protected readonly StringBuilder _builder = new StringBuilder();
 
         #endregion
 
 
         /// <summary>
-        /// Is the conversion is currently on table
+        /// If to encode the text using HTML encoding.
         /// </summary>
-        public bool InTable { get; set; }
+        public abstract bool HtmlEncode { get; }
+
+        public string GetMarkdown()
+        {
+            return _builder.ToString().Trim();
+        }
 
         /// <summary>
-        /// Is the table header has been created from the first row of the table
+        /// Check if the current build markdown ends with newline, ignore whitespaces.
         /// </summary>
-        public bool TableHeaderDone { get; set; }
-
         public bool IsEndsNewLine()
         {
             int i = _builder.Length - 1;
@@ -50,9 +59,22 @@ namespace OnenoteMarkdownConverter
         }
 
         /// <summary>
+        /// Remove all whitespaces from the end of the builder.
+        /// </summary>
+        public void TrimEndWhitespaces()
+        {
+            int i = _builder.Length;
+            while (i > 1 && Char.IsWhiteSpace(_builder[i - 1]))
+                i--;
+
+            if (i < _builder.Length)
+                _builder.Remove(i, _builder.Length - i);
+        }
+
+        /// <summary>
         /// Append the given string to the markdown
         /// </summary>
-        public MarkdownBuilder Append(string value)
+        public MarkdownBuilderBase Append(string value)
         {
             _builder.Append(value);
             return this;
@@ -61,7 +83,7 @@ namespace OnenoteMarkdownConverter
         /// <summary>
         /// Append newline to the markdown
         /// </summary>
-        public MarkdownBuilder AppendLine()
+        public MarkdownBuilderBase AppendLine()
         {
             _builder.AppendLine();
             return this;
@@ -70,37 +92,45 @@ namespace OnenoteMarkdownConverter
         /// <summary>
         /// Append newline to the markdown that will not be removed later.
         /// </summary>
-        public MarkdownBuilder AppendStrongLine()
+        public MarkdownBuilderBase AppendStrongLine()
         {
             _builder.Append("&nbsp;").AppendLine();
             return this;
         }
 
-        public int AddReference(string value, string title)
+        /// <summary>
+        /// Append text decoration tags for given style.
+        /// </summary>
+        public virtual MarkdownBuilderBase AppendDecoration(bool bold, bool italic, bool underline)
         {
-            var tuple = Tuple.Create(_references.Count + 1, value, CleanString(title));
-            _references.Add(tuple);
-            return tuple.Item1;
+            if (italic && bold)
+                _builder.Append("***");
+            else if (bold)
+                _builder.Append("**");
+            else if (italic)
+                _builder.Append("*");
+            return this;
         }
 
-        public Tuple<int, string, string>[] GetAllReferences()
+        /// <summary>
+        /// Append link reference to the markdown that will not be removed later.
+        /// </summary>
+        public virtual MarkdownBuilderBase AppendImage(int reference, string alt)
         {
-            return _references.ToArray();
+            _builder.Append("![").Append(alt).Append("][").Append(reference.ToString(CultureInfo.InvariantCulture)).Append("]");
+            return this;
         }
 
-        public string CleanString(string str)
+        /// <summary>
+        /// Append link reference to the markdown that will not be removed later.
+        /// </summary>
+        public virtual MarkdownBuilderBase AppendLinkReference(Link link)
         {
-            if (str != null)
-            {
-                str = str.Replace("Machine generated alternative", "");
-                str = Regex.Replace(str, "&#\\d+;", "");
-            }
-            return str;
-        }
-
-        public string GetMarkdown()
-        {
-            return _builder.ToString().Trim();
+            _builder.Append("[").Append(link.Index.ToString(CultureInfo.InvariantCulture)).Append("]: ").Append(link.Source);
+            if (!string.IsNullOrWhiteSpace(link.Title))
+                _builder.Append(" \"").Append(link.Title).Append("\"");
+            _builder.AppendLine();
+            return this;
         }
     }
 }
