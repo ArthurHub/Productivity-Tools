@@ -19,22 +19,35 @@ namespace OnenoteMarkdownConverter
     /// <summary>
     /// Builder for creating markdown text.
     /// </summary>
-    internal abstract class MarkdownBuilderBase
+    internal class MarkdownBuilder
     {
         #region Fields and Consts
 
         /// <summary>
         /// The inner string builder used to create the markdown text
         /// </summary>
-        protected readonly StringBuilder _builder = new StringBuilder();
-
-        #endregion
-
+        private readonly StringBuilder _builder = new StringBuilder();
 
         /// <summary>
         /// If to encode the text using HTML encoding.
         /// </summary>
-        public abstract bool HtmlEncode { get; }
+        private readonly bool _htmlEncode;
+
+        #endregion
+
+
+        public MarkdownBuilder(bool htmlEncode)
+        {
+            _htmlEncode = htmlEncode;
+        }
+
+        /// <summary>
+        /// If to encode the text using HTML encoding.
+        /// </summary>
+        public bool HtmlEncode
+        {
+            get { return _htmlEncode; }
+        }
 
         public string GetMarkdown()
         {
@@ -74,7 +87,7 @@ namespace OnenoteMarkdownConverter
         /// <summary>
         /// Append the given string to the markdown
         /// </summary>
-        public MarkdownBuilderBase Append(string value)
+        public MarkdownBuilder Append(string value)
         {
             _builder.Append(value);
             return this;
@@ -83,16 +96,16 @@ namespace OnenoteMarkdownConverter
         /// <summary>
         /// Append newline to the markdown
         /// </summary>
-        public MarkdownBuilderBase AppendLine()
+        public MarkdownBuilder AppendLine()
         {
-            _builder.AppendLine();
+            _builder.Append("  ").AppendLine();
             return this;
         }
 
         /// <summary>
         /// Append newline to the markdown that will not be removed later.
         /// </summary>
-        public MarkdownBuilderBase AppendStrongLine()
+        public MarkdownBuilder AppendStrongLine()
         {
             _builder.Append("&nbsp;").AppendLine();
             return this;
@@ -101,7 +114,27 @@ namespace OnenoteMarkdownConverter
         /// <summary>
         /// Append text decoration tags for given style.
         /// </summary>
-        public virtual MarkdownBuilderBase AppendDecoration(bool bold, bool italic, bool underline)
+        public virtual MarkdownBuilder AppendHeader(int size)
+        {
+            AppendStrongLine();
+            if (size == 1)
+                _builder.Append("#");
+            else if (size == 2)
+                _builder.Append("##");
+            else if (size == 3)
+                _builder.Append("###");
+            else if (size == 4)
+                _builder.Append("####");
+            else if (size == 5)
+                _builder.Append("#####");
+            _builder.Append(" ");
+            return this;
+        }
+
+        /// <summary>
+        /// Append text decoration tags for given style.
+        /// </summary>
+        public virtual MarkdownBuilder AppendDecoration(bool bold, bool italic, bool underline)
         {
             if (italic && bold)
                 _builder.Append("***");
@@ -115,7 +148,7 @@ namespace OnenoteMarkdownConverter
         /// <summary>
         /// Append link reference to the markdown that will not be removed later.
         /// </summary>
-        public virtual MarkdownBuilderBase AppendImage(int reference, string alt)
+        public virtual MarkdownBuilder AppendImage(int reference, string alt)
         {
             _builder.Append("![").Append(alt).Append("][").Append(reference.ToString(CultureInfo.InvariantCulture)).Append("]");
             return this;
@@ -124,7 +157,7 @@ namespace OnenoteMarkdownConverter
         /// <summary>
         /// Append link reference to the markdown that will not be removed later.
         /// </summary>
-        public virtual MarkdownBuilderBase AppendLinkReference(Link link)
+        public virtual MarkdownBuilder AppendLinkReference(Link link)
         {
             _builder.Append("[").Append(link.Index.ToString(CultureInfo.InvariantCulture)).Append("]: ").Append(link.Source);
             if (!string.IsNullOrWhiteSpace(link.Title))

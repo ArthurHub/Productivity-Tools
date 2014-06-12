@@ -60,7 +60,7 @@ namespace OnenoteMarkdownConverter
             var converter = new Converter();
 
             _copyMarkDownButton.Content = "Copy Markdown";
-            _markdownTB.Text = converter.ConvertHtmlToMarkdown(_sourceHtmlTB.Text, new WordpressMarkdownBuilder());
+            _markdownTB.Text = converter.ConvertHtmlToMarkdown(_sourceHtmlTB.Text, new MarkdownBuilder(false));
         }
 
         /// <summary>

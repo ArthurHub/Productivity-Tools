@@ -26,7 +26,7 @@ namespace OnenoteMarkdownConverter
         /// <summary>
         /// The markdown builder to use for convert
         /// </summary>
-        private MarkdownBuilderBase _builder;
+        private MarkdownBuilder _builder;
 
         /// <summary>
         /// Used to 
@@ -57,7 +57,7 @@ namespace OnenoteMarkdownConverter
         /// <param name="html">the html string to convert</param>
         /// <param name="builder">the markdown builder to use</param>
         /// <returns>the markdown string</returns>
-        public string ConvertHtmlToMarkdown(string html, MarkdownBuilderBase builder)
+        public string ConvertHtmlToMarkdown(string html, MarkdownBuilder builder)
         {
             _inCode = false;
             _inTable = false;
@@ -178,13 +178,13 @@ namespace OnenoteMarkdownConverter
             if (node.Name == "p")
             {
                 var header = GetHeader(node);
-                if (header != null)
+                if (header > 0)
                 {
                     if (isOpen)
                     {
                         if (!_inTable)
                             _builder.AppendLine();
-                        _builder.Append(header).Append(" ");
+                        _builder.AppendHeader(header);
                     }
                 }
                 else
@@ -221,7 +221,8 @@ namespace OnenoteMarkdownConverter
                 bool bold = CheckStylesContains(node, "font-weigh", "bold");
                 bool italic = CheckStylesContains(node, "font-style", "italic");
                 bool underline = CheckStylesContains(node, "text-decoration", "underline");
-                _builder.AppendDecoration(bold, italic, underline);
+                bool isHeader = node.ParentNode != null && GetHeader(node.ParentNode) > 0;
+                _builder.AppendDecoration(bold, italic && !isHeader, underline);
 
                 if (!isOpen)
                     _builder.Append(" ");
@@ -397,7 +398,7 @@ namespace OnenoteMarkdownConverter
             return -1;
         }
 
-        private static string GetHeader(HtmlNode node)
+        private static int GetHeader(HtmlNode node)
         {
             var style = node.GetAttributeValue("style", null);
             if (style != null)
@@ -414,13 +415,17 @@ namespace OnenoteMarkdownConverter
                 }
 
                 if (size == 16)
-                    return "#";
-                else if (size == 14)
-                    return "##";
-                else if (size == 12)
-                    return "###";
+                    return 1;
+                if (size == 14)
+                    return 2;
+                if (size == 12)
+                {
+                    if (node.ChildNodes.Count > 0 && CheckStylesContains(node.ChildNodes[0], "font-style", "italic"))
+                        return 4;
+                    return 3;
+                }
             }
-            return null;
+            return -1;
         }
 
         private static string[] GetStyles(HtmlNode node)

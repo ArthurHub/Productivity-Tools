@@ -61,7 +61,6 @@
     <Compile Include="ConverterControl.xaml.cs">
       <DependentUpon>ConverterControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="WordpressMarkdownBuilder.cs" />
     <Compile Include="MarkdownBuilder.cs" />
   </ItemGroup>
   <ItemGroup>
