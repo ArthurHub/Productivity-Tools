@@ -300,7 +300,7 @@ namespace OnenoteMarkdownConverter
             if (node.Name == "ul" || node.Name == "ol")
             {
                 _inListLevel += isOpen ? 1 : -1;
-                if (!isOpen && _inListLevel == 0)
+                if (_inListLevel == (isOpen ? 1 : 0))
                     _builder.AppendLine();
 
             }
