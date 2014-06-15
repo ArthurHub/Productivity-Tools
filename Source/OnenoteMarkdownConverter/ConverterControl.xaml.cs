@@ -69,7 +69,8 @@ namespace OnenoteMarkdownConverter
             var converter = new Converter();
 
             _copyMarkDownButton.Content = "Copy Markdown";
-            _markdownTB.Text = converter.ConvertHtmlToMarkdown(_sourceHtmlTB.Text, new MarkdownBuilder(_htmlEncode.IsChecked.GetValueOrDefault(false)));
+            var markdownBuilder = new MarkdownBuilder(_htmlEncode.IsChecked, _persistEmptyLines.IsChecked);
+            _markdownTB.Text = converter.ConvertHtmlToMarkdown(_sourceHtmlTB.Text, markdownBuilder);
         }
 
         /// <summary>

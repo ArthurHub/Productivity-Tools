@@ -26,7 +26,12 @@
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
-            <CheckBox x:Name="_htmlEncode" IsChecked="True" Content="HTML Encode" VerticalAlignment="Center" Margin="0 0 10 0" Checked="OnHtmlEncodeChecked" Unchecked="OnHtmlEncodeChecked"/>
+            <Menu VerticalAlignment="Center" Background="Transparent" Margin="0 0 6 0">
+                <MenuItem Header="Options" FontSize="14">
+                    <MenuItem x:Name="_htmlEncode" IsChecked="True" IsCheckable="True" Header="HTML Encode" Checked="OnHtmlEncodeChecked" Unchecked="OnHtmlEncodeChecked"/>
+                    <MenuItem x:Name="_persistEmptyLines" IsChecked="True" IsCheckable="True" Header="Persist empty lines" Checked="OnHtmlEncodeChecked" Unchecked="OnHtmlEncodeChecked"/>
+                </MenuItem>
+            </Menu>
             <Button x:Name="_copyMarkDownButton" Grid.Column="1" Content="Copy Markdown" Click="OnCopyMarkdown_click"/>
         </Grid>
         <TextBox x:Name="_sourceHtmlTB" TextWrapping="Wrap" AcceptsReturn="True" VerticalScrollBarVisibility="Auto" Grid.Row="1" Grid.Column="0" TextChanged="OnSourceHtml_TextChanged"/>

@@ -92,13 +92,17 @@ namespace OnenoteMarkdownConverter
                 // replace preformatted code whitespaces
                 markdown = markdown.Replace("$-$space", " ");
 
-                // fix extra lines
-                markdown = Regex.Replace(markdown, "^\\s*\\n\\s*", "\n", RegexOptions.Multiline);
-
                 if (_builder.HtmlEncode)
                     markdown = WebUtility.HtmlEncode(markdown);
 
-                markdown = markdown.Replace("$-$nbsp", "&nbsp;");
+                // change empty lines to persist if required
+                markdown = markdown.Replace("$-$nbsp", _builder.PersistEmptyLines ? "&nbsp;" : string.Empty);
+
+                // fix extra lines
+                markdown = Regex.Replace(markdown, "^\\s*\\n\\s*", "\n", RegexOptions.Multiline);
+
+                // empty lines is code should be persisted without &nbsp;
+                markdown = markdown.Replace("$-$code_nbsp", string.Empty);
 
                 // return
                 return markdown;
@@ -144,7 +148,9 @@ namespace OnenoteMarkdownConverter
         private void HandleText(HtmlNode node)
         {
             var text = node.InnerText;
-            text = text.Replace("\r", " ").Replace("\n", " ").Replace("&nbsp;", "$-$nbsp");
+            text = text.Replace("\r", " ").Replace("\n", " ");
+
+            text = text.Replace("&nbsp;", _inCode ? "$-$code_nbsp" : "$-$nbsp");
 
             text = _inCode
                 ? text.Replace(char.ConvertFromUtf32(160), "$-$space")

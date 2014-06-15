@@ -33,12 +33,18 @@ namespace OnenoteMarkdownConverter
         /// </summary>
         private readonly bool _htmlEncode;
 
+        /// <summary>
+        /// If to persist empty lines using <![CDATA[&nbsp;]]>
+        /// </summary>
+        private readonly bool _persistEmptyLines;
+
         #endregion
 
 
-        public MarkdownBuilder(bool htmlEncode)
+        public MarkdownBuilder(bool htmlEncode, bool persistEmptyLines)
         {
             _htmlEncode = htmlEncode;
+            _persistEmptyLines = persistEmptyLines;
         }
 
         /// <summary>
@@ -47,6 +53,14 @@ namespace OnenoteMarkdownConverter
         public bool HtmlEncode
         {
             get { return _htmlEncode; }
+        }
+
+        /// <summary>
+        /// If to persist empty lines using <![CDATA[&nbsp;]]>
+        /// </summary>
+        public bool PersistEmptyLines
+        {
+            get { return _persistEmptyLines; }
         }
 
         public string GetMarkdown()
