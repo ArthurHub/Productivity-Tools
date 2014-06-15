@@ -82,7 +82,7 @@ namespace OnenoteMarkdownConverter
                 }
 
                 // append all link references to the end
-                _builder.AppendLine();
+                _builder.AppendLine().AppendLine();
                 foreach (var link in _references)
                     builder.AppendLinkReference(link);
 
@@ -100,6 +100,7 @@ namespace OnenoteMarkdownConverter
 
                 // fix extra lines
                 markdown = Regex.Replace(markdown, "^\\s*\\n\\s*", "\n", RegexOptions.Multiline);
+                markdown = Regex.Replace(markdown, "^\\s*\\n\\s*&nbsp;", "&nbsp;", RegexOptions.Multiline);
 
                 // empty lines is code should be persisted without &nbsp;
                 markdown = markdown.Replace("$-$code_nbsp", string.Empty);
@@ -286,9 +287,10 @@ namespace OnenoteMarkdownConverter
         {
             if (node.Name == "ul" || node.Name == "ol")
             {
-                if (isOpen && _inListLevel == 0)
-                    _builder.AppendLine();
                 _inListLevel += isOpen ? 1 : -1;
+                if (!isOpen && _inListLevel == 0)
+                    _builder.AppendLine();
+                
             }
 
             if (node.Name == "li")
