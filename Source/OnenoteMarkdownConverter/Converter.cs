@@ -39,6 +39,11 @@ namespace OnenoteMarkdownConverter
         private bool _inCode;
 
         /// <summary>
+        /// Is the conversion is currently inside list element (level for nested lists)
+        /// </summary>
+        private int _inListLevel;
+
+        /// <summary>
         /// Is the conversion is currently on table
         /// </summary>
         private bool _inTable;
@@ -77,22 +82,26 @@ namespace OnenoteMarkdownConverter
                 }
 
                 // append all link references to the end
-                _builder.AppendStrongLine();
+                _builder.AppendLine();
                 foreach (var link in _references)
                     builder.AppendLinkReference(link);
 
-                // fix extra lines
-                var mardown = _builder.GetMarkdown();
-                mardown = Regex.Replace(mardown, "^\\s+", "", RegexOptions.Multiline);
-                mardown = Regex.Replace(mardown, "(&nbsp;\\s*&nbsp;){1,}", "&nbsp;^^^nl^^^");
-                mardown = mardown.Replace("&nbsp;", "");
-                mardown = mardown.Replace("^^^nl^^^", "&nbsp;" + Environment.NewLine);
+                // get the built markdown
+                var markdown = _builder.GetMarkdown();
 
                 // replace preformatted code whitespaces
-                mardown = mardown.Replace("$-$", " ");
+                markdown = markdown.Replace("$-$space", " ");
+
+                // fix extra lines
+                markdown = Regex.Replace(markdown, "^\\s*\\n\\s*", "\n", RegexOptions.Multiline);
+
+                if (_builder.HtmlEncode)
+                    markdown = WebUtility.HtmlEncode(markdown);
+
+                markdown = markdown.Replace("$-$nbsp", "&nbsp;");
 
                 // return
-                return mardown;
+                return markdown;
             }
             else
             {
@@ -135,14 +144,13 @@ namespace OnenoteMarkdownConverter
         private void HandleText(HtmlNode node)
         {
             var text = node.InnerText;
-            text = text.Replace("\r", " ").Replace("\n", " ");
+            text = text.Replace("\r", " ").Replace("\n", " ").Replace("&nbsp;", "$-$nbsp");
 
             text = _inCode
-                ? text.Replace(char.ConvertFromUtf32(160), "$-$")
+                ? text.Replace(char.ConvertFromUtf32(160), "$-$space")
                 : Regex.Replace(text, "\\s{2,}", " ");
 
-            if (!_builder.HtmlEncode)
-                text = WebUtility.HtmlDecode(text);
+            text = WebUtility.HtmlDecode(text);
 
             _builder.Append(text);
 
@@ -189,7 +197,7 @@ namespace OnenoteMarkdownConverter
                 }
                 else
                 {
-                    if (!_inTable && !_builder.IsEndsNewLine())
+                    if (!_inTable && !_builder.IsEndsNewLine() && isOpen)
                     {
                         _builder.AppendLine();
                     }
@@ -203,7 +211,7 @@ namespace OnenoteMarkdownConverter
                             if (double.TryParse(styleValue.Substring(0, styleValue.Length - 3), out width))
                             {
                                 for (int i = 0; i < width * 1000 / 375; i++)
-                                    _builder.Append("$-$$-$$-$$-$");
+                                    _builder.Append("$-$space$-$space$-$space$-$space");
                             }
                         }
                     }
@@ -270,9 +278,11 @@ namespace OnenoteMarkdownConverter
 
         private void HandleList(HtmlNode node, bool isOpen)
         {
-            if (isOpen && (node.Name == "ul" || node.Name == "ol"))
+            if (node.Name == "ul" || node.Name == "ol")
             {
-                _builder.AppendStrongLine();
+                if (isOpen && _inListLevel == 0)
+                    _builder.AppendLine();
+                _inListLevel += isOpen ? 1 : -1;
             }
 
             if (node.Name == "li")
@@ -296,7 +306,7 @@ namespace OnenoteMarkdownConverter
 
                 if (isOpen)
                 {
-                    _builder.AppendLine().Append(number > 0 ? number + "." : "*").Append(" ");
+                    _builder.AppendList(_inListLevel, number);
                 }
             }
         }

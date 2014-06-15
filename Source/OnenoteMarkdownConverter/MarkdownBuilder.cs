@@ -103,20 +103,24 @@ namespace OnenoteMarkdownConverter
         }
 
         /// <summary>
-        /// Append newline to the markdown that will not be removed later.
+        /// Append list markdown prefix.
         /// </summary>
-        public MarkdownBuilder AppendStrongLine()
+        public MarkdownBuilder AppendList(int level, int number)
         {
-            _builder.Append("&nbsp;").AppendLine();
+            _builder.AppendLine();
+            if (level > 1)
+                _builder.Append(" ");
+            _builder.Append(number > 0 ? number + "." : "*");
+            _builder.Append(" ");
             return this;
         }
 
         /// <summary>
-        /// Append text decoration tags for given style.
+        /// Append header markdown prefix.
         /// </summary>
         public virtual MarkdownBuilder AppendHeader(int size)
         {
-            AppendStrongLine();
+            AppendLine();
             if (size == 1)
                 _builder.Append("#");
             else if (size == 2)
@@ -164,6 +168,11 @@ namespace OnenoteMarkdownConverter
                 _builder.Append(" \"").Append(link.Title).Append("\"");
             _builder.AppendLine();
             return this;
+        }
+
+        public override string ToString()
+        {
+            return string.Format("Builder: {0}", _builder);
         }
     }
 }
