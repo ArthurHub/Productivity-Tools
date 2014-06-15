@@ -95,6 +95,9 @@ namespace OnenoteMarkdownConverter
                 if (_builder.HtmlEncode)
                     markdown = WebUtility.HtmlEncode(markdown);
 
+                // handle quotes that are part of the markdown
+                markdown = markdown.Replace("$-$quot", "\"");
+
                 // change empty lines to persist if required
                 markdown = markdown.Replace("$-$nbsp", _builder.PersistEmptyLines ? "&nbsp;" : string.Empty);
 
@@ -273,11 +276,20 @@ namespace OnenoteMarkdownConverter
                 {
                     if (isOpen)
                     {
-                        var uri = new Uri(src);
-                        var name = uri.Segments[uri.Segments.Length - 1];
-                        var alt = CleanString(node.GetAttributeValue("alt", name)) ?? "image";
-                        int reference = AddReference(src, alt);
-                        _builder.AppendImage(reference, alt);
+                        String name;
+                        if (src.StartsWith("file:"))
+                        {
+                            name = System.IO.Path.GetFileName(src);
+                            src = "LOCAL_FILE_PATH/" + name;
+                        }
+                        else
+                        {
+                            var uri = new Uri(src);
+                            name = uri.Segments[uri.Segments.Length - 1];
+                        }
+
+                        int reference = AddReference(src, name);
+                        _builder.AppendImage(reference, name);
                     }
                 }
             }
@@ -290,7 +302,7 @@ namespace OnenoteMarkdownConverter
                 _inListLevel += isOpen ? 1 : -1;
                 if (!isOpen && _inListLevel == 0)
                     _builder.AppendLine();
-                
+
             }
 
             if (node.Name == "li")

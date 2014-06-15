@@ -168,7 +168,16 @@ namespace OnenoteMarkdownConverter
         /// </summary>
         public virtual MarkdownBuilder AppendImage(int reference, string alt)
         {
-            _builder.Append("![").Append(alt).Append("][").Append(reference.ToString(CultureInfo.InvariantCulture)).Append("]");
+            var ageRefIndex = reference.ToString(CultureInfo.InvariantCulture);
+            _builder
+                .Append("[")
+                .Append("![")
+                .Append(alt)
+                .Append("][")
+                .Append(ageRefIndex)
+                .Append("]][")
+                .Append(ageRefIndex)
+                .Append("]");
             return this;
         }
 
@@ -179,7 +188,7 @@ namespace OnenoteMarkdownConverter
         {
             _builder.Append("[").Append(link.Index.ToString(CultureInfo.InvariantCulture)).Append("]: ").Append(link.Source);
             if (!string.IsNullOrWhiteSpace(link.Title))
-                _builder.Append(" \"").Append(link.Title).Append("\"");
+                _builder.Append(" $-$quot").Append(link.Title).Append("$-$quot");
             _builder.AppendLine();
             return this;
         }
