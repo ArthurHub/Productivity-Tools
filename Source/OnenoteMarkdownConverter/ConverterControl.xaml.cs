@@ -34,11 +34,7 @@ namespace OnenoteMarkdownConverter
         private void OnPasteSourceHtml_click(object sender, RoutedEventArgs e)
         {
             _markdownTB.Text = String.Empty;
-            _sourceHtmlTB.Text = String.Empty;
             SetHtmlTextFromClipboard();
-
-            RunConvert();
-            SetMarkdownToClipboard();
         }
 
         private void OnHtmlEncodeChecked(object sender, RoutedEventArgs e)
@@ -59,6 +55,7 @@ namespace OnenoteMarkdownConverter
         private void OnSourceHtml_TextChanged(object sender, TextChangedEventArgs e)
         {
             RunConvert();
+            SetMarkdownToClipboard();
         }
 
         /// <summary>

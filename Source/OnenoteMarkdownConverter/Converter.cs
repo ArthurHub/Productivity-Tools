@@ -106,7 +106,7 @@ namespace OnenoteMarkdownConverter
                 markdown = Regex.Replace(markdown, "^\\s*\\n\\s*&nbsp;", "&nbsp;", RegexOptions.Multiline);
 
                 // empty lines is code should be persisted without &nbsp;
-                markdown = markdown.Replace("$-$code_nbsp", string.Empty);
+                markdown = markdown.Replace("$-$empty_line", string.Empty);
 
                 // return
                 return markdown;
@@ -154,7 +154,7 @@ namespace OnenoteMarkdownConverter
             var text = node.InnerText;
             text = text.Replace("\r", " ").Replace("\n", " ");
 
-            text = text.Replace("&nbsp;", _inCode ? "$-$code_nbsp" : "$-$nbsp");
+            text = text.Replace("&nbsp;", _inCode ? "$-$empty_line" : "$-$nbsp");
 
             text = _inCode
                 ? text.Replace(char.ConvertFromUtf32(160), "$-$space")
@@ -302,7 +302,8 @@ namespace OnenoteMarkdownConverter
                 _inListLevel += isOpen ? 1 : -1;
                 if (_inListLevel == (isOpen ? 1 : 0))
                     _builder.AppendLine();
-
+                if (_inListLevel == 0)
+                    AppendForceEmptyLine();
             }
 
             if (node.Name == "li")
@@ -491,6 +492,14 @@ namespace OnenoteMarkdownConverter
                 }
             }
             return null;
+        }
+
+        /// <summary>
+        /// Append string to force empty line in markdown end.
+        /// </summary>
+        private void AppendForceEmptyLine()
+        {
+            _builder.Append("$-$empty_line");
         }
 
         #endregion
