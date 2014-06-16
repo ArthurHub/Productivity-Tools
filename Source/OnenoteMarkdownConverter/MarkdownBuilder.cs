@@ -88,14 +88,16 @@ namespace OnenoteMarkdownConverter
         /// <summary>
         /// Remove all whitespaces from the end of the builder.
         /// </summary>
-        public void TrimEndWhitespaces()
+        public MarkdownBuilder TrimEndWhitespaces()
         {
             int i = _builder.Length;
-            while (i > 1 && Char.IsWhiteSpace(_builder[i - 1]))
+            while (i > 1 && Char.IsWhiteSpace(_builder[i - 1]) && _builder[i - 1] != '\n')
                 i--;
 
             if (i < _builder.Length)
                 _builder.Remove(i, _builder.Length - i);
+
+            return this;
         }
 
         /// <summary>

@@ -31,7 +31,7 @@ namespace OnenoteMarkdownConverter
         /// <summary>
         /// Used to 
         /// </summary>
-        private readonly List<Link> _references = new List<Link>();
+        private readonly HashSet<Link> _references = new HashSet<Link>();
 
         /// <summary>
         /// Is the conversion is currently on code preformatted segment.
@@ -337,16 +337,15 @@ namespace OnenoteMarkdownConverter
             {
                 _inTable = isOpen;
                 _tableHeaderDone = false;
+
+                if (_inTable)
+                    _builder.AppendLine().AppendLine();
             }
             else if (node.Name == "td")
             {
                 if (isOpen)
                 {
-                    _builder.Append("| ");
-                }
-                else
-                {
-                    _builder.Append(" ");
+                    _builder.TrimEndWhitespaces().Append("|");
                 }
             }
             else if (node.Name == "tr")
@@ -357,7 +356,7 @@ namespace OnenoteMarkdownConverter
                     if (!_tableHeaderDone)
                     {
                         _tableHeaderDone = true;
-                        _builder.Append("| ");
+                        _builder.Append("|");
                         foreach (var childNode in node.ChildNodes)
                         {
                             if (childNode.Name == "td")
@@ -368,7 +367,7 @@ namespace OnenoteMarkdownConverter
                                 _builder.Append("---");
                                 if (align >= 0)
                                     _builder.Append(":");
-                                _builder.Append(" | ");
+                                _builder.Append("|");
                             }
                         }
                         _builder.AppendLine();

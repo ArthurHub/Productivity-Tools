@@ -62,5 +62,24 @@ namespace OnenoteMarkdownConverter
         {
             get { return _title; }
         }
+
+        private bool Equals(Link other)
+        {
+            return string.Equals(_source, other._source);
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj))
+                return false;
+            if (ReferenceEquals(this, obj))
+                return true;
+            return obj is Link && Equals((Link)obj);
+        }
+
+        public override int GetHashCode()
+        {
+            return (_source != null ? _source.GetHashCode() : 0);
+        }
     }
 }
