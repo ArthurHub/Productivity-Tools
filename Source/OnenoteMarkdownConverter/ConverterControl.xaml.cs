@@ -112,7 +112,7 @@ namespace OnenoteMarkdownConverter
                     int end = htmlStr.IndexOf(EndFragment, start, StringComparison.Ordinal);
                     if (end > -1)
                     {
-                        _sourceHtmlTB.SelectedText = htmlStr.Substring(start + StartFragment.Length, end - start - StartFragment.Length).Trim();
+                        _sourceHtmlTB.Text = htmlStr.Substring(start + StartFragment.Length, end - start - StartFragment.Length).Trim();
                         return true;
                     }
                 }

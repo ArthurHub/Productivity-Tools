@@ -31,7 +31,7 @@ namespace OnenoteMarkdownConverter
         /// <summary>
         /// Used to 
         /// </summary>
-        private readonly HashSet<Link> _references = new HashSet<Link>();
+        private readonly Dictionary<String, Link> _references = new Dictionary<string, Link>();
 
         /// <summary>
         /// Is the conversion is currently on code preformatted segment.
@@ -83,7 +83,7 @@ namespace OnenoteMarkdownConverter
 
                 // append all link references to the end
                 _builder.AppendLine().AppendLine();
-                foreach (var link in _references)
+                foreach (var link in _references.Values)
                     builder.AppendLinkReference(link);
 
                 // get the built markdown
@@ -104,6 +104,7 @@ namespace OnenoteMarkdownConverter
                 // fix extra lines
                 markdown = Regex.Replace(markdown, "^\\s*\\n\\s*", "\n", RegexOptions.Multiline);
                 markdown = Regex.Replace(markdown, "^\\s*\\n\\s*&nbsp;", "&nbsp;", RegexOptions.Multiline);
+                markdown = Regex.Replace(markdown, "^&nbsp;\\s+\n#", "&nbsp;\n#", RegexOptions.Multiline);
 
                 // empty lines is code should be persisted without &nbsp;
                 markdown = markdown.Replace("$-$empty_line", string.Empty);
@@ -300,10 +301,8 @@ namespace OnenoteMarkdownConverter
             if (node.Name == "ul" || node.Name == "ol")
             {
                 _inListLevel += isOpen ? 1 : -1;
-                if (_inListLevel == (isOpen ? 1 : 0))
-                    _builder.AppendLine();
                 if (_inListLevel == 0)
-                    AppendForceEmptyLine();
+                    _builder.AppendLine().Append("$-$empty_line");
             }
 
             if (node.Name == "li")
@@ -383,8 +382,12 @@ namespace OnenoteMarkdownConverter
         /// <returns>the index of the reference</returns>
         private int AddReference(string value, string title)
         {
-            var link = new Link(_references.Count + 1, value, CleanString(title));
-            _references.Add(link);
+            Link link;
+            if (!_references.TryGetValue(value, out link))
+            {
+                link = new Link(_references.Count + 1, value, CleanString(title));
+                _references.Add(value, link);
+            }
             return link.Index;
         }
 
@@ -492,14 +495,6 @@ namespace OnenoteMarkdownConverter
                 }
             }
             return null;
-        }
-
-        /// <summary>
-        /// Append string to force empty line in markdown end.
-        /// </summary>
-        private void AppendForceEmptyLine()
-        {
-            _builder.Append("$-$empty_line");
         }
 
         #endregion
