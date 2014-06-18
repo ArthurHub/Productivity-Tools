@@ -104,8 +104,8 @@ namespace OnenoteMarkdownConverter
                 // fix extra lines
                 markdown = Regex.Replace(markdown, "^\\s*\\n\\s*", "\n", RegexOptions.Multiline);
                 markdown = Regex.Replace(markdown, "^\\s*\\n\\s*&nbsp;", "&nbsp;", RegexOptions.Multiline);
-                markdown = Regex.Replace(markdown, "^&nbsp;\\s+\n#", "&nbsp;\n", RegexOptions.Multiline);
-                markdown = Regex.Replace(markdown, "^\\$-\\$empty_line\\s+?&nbsp;", "$-$empty_line", RegexOptions.Multiline);
+                markdown = Regex.Replace(markdown, "^&nbsp;\\s+\n#", "&nbsp;  \n#", RegexOptions.Multiline);
+                //markdown = Regex.Replace(markdown, "^\\$-\\$empty_line\\s+?&nbsp;", "$-$empty_line", RegexOptions.Multiline);
                 markdown = Regex.Replace(markdown, "^&nbsp;\\s+?\\$-\\$empty_line", "$-$empty_line", RegexOptions.Multiline);
 
                 // empty lines is code should be persisted without &nbsp;
@@ -192,6 +192,8 @@ namespace OnenoteMarkdownConverter
             HandleList(node, isOpen);
 
             HandleTable(node, isOpen);
+
+            HandleBr(node, isOpen);
         }
 
         private void HandleParagraph(HtmlNode node, bool isOpen)
@@ -303,9 +305,7 @@ namespace OnenoteMarkdownConverter
             if (node.Name == "ul" || node.Name == "ol")
             {
                 _inListLevel += isOpen ? 1 : -1;
-                if (_inListLevel == 1)
-                    _builder.AppendLine().Append("$-$empty_line");
-                if (_inListLevel == 0)
+                if (_inListLevel <= 1)
                     _builder.AppendLine().Append("$-$empty_line");
             }
 
@@ -377,6 +377,15 @@ namespace OnenoteMarkdownConverter
                         _builder.AppendLine();
                     }
                 }
+            }
+        }
+
+        private void HandleBr(HtmlNode node, bool isOpen)
+        {
+            if (node.Name == "br")
+            {
+                if (!isOpen)
+                    _builder.AppendLine();
             }
         }
 
@@ -499,14 +508,6 @@ namespace OnenoteMarkdownConverter
                 }
             }
             return null;
-        }
-
-        /// <summary>
-        /// Append string to force empty line in markdown end.
-        /// </summary>
-        private void AppendForceEmptyLine()
-        {
-            _builder.Append("$-$empty_line");
         }
 
         #endregion
